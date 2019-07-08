@@ -1,7 +1,7 @@
-= Reproducibility and Portability Battles in the C++ Standard
+= Blind Adversarial Attacks Against Medical Deep Learning Systems
 :imagesdir: images
 :icons: font
-:date: June 13, 2019
+:date: May 16, 2019
 :my_name: Peter Steinbach
 :my_email: steinbach@extern.mpi-cbg.de
 :my_twitter: psteinb_
@@ -15,305 +15,453 @@
 :revealjs_plugin_pdf: enabled #you run your presentation in a browser with ?print-pdf at the end of the URL, you can then use the default print function to print the slide deck into a PDF document.
 :customcss: custom.css
 :source-highlighter: highlightjs
-:source-linenums-option: true
-:wikipedia-url-1: https://en.wikipedia.org/wiki/Pseudorandomness
 :stem:
 
 mailto:{my_email}[{my_name}] (https://www.mpi-cbg.de[MPI CBG], https://www.scionics.de[Scionics]) +
-C++ UG {date} +
-SLUB, Dresden, Germany +
+2nd MLC Workshop {date} +
+Helmholtz-Zentrum Dresden-Rossendorf, Germany +
 https://twitter.com/{my_twitter}[icon:twitter[] psteinb_] https://github.com/{my_github}[icon:github[] psteinb] + 
 
-== Disclaimer(s)
+== Introducing Adversarial Examples
 
-=== My Tasks at https://mpi-cbg.de[MPI CBG] / https://scionics.de[Scionics]
+icon:question-circle[5x]
 
-image:x600px-MPI-CBG_building_outside_4pl.jpg[width=55%]
+=== Supervised Deep Learning Classifiers
 
-[.XXL-text]
-Performance Engineering, HPC Cluster Support, Data Science/ML
+image:dl-process.png[width=75%]
 
-=== These Slides
+From <<MapRBlog>>
 
-[.XXL-text]
+[.notes]
 --
-icon:users[5x] icon:download[5x] +
-  + 
-For questions, concerns and feedback: +
-https://github.com/psteinb/cppugdd-reproducibility[github.com/psteinb/cppugdd-reproducibility]
+* classification (accuracy better than human)
+* large training/test set
+* data set = good balance of classes
 --
 
+=== What are Adversarial Examples?
 
-== Why this talk?
+image:advex-explained-1-nogradient.png[width=90%]
 
+From <<Goodfellow14>> (based on <<Szegedy14>>)
 
-=== Reproducibility?
+=== Fooling by printing
 
-image::reproducibility-crisis-ccby2-MarcoVerch-flickr.jpeg[width=90%]
+image:advex-explained-2.png[width=90%]
 
-by https://www.flickr.com/photos/146269332@N03/47009867234/[Marco Verch]
+From <<Kurakin16>>
 
-[.XL-Text]
-=== https://en.wikipedia.org/wiki/Growth_in_a_Time_of_Debt[Most Prominent Example]
+=== Fooling by backdoors
 
-[%step]
-* https://scholar.harvard.edu/files/rogoff/files/growth_in_time_debt_aer.pdf[Growth in a time of debt], Carmen Reinhart & Kenneth Rogoff, 2010
-** countries with very high debt–GDP ratios suffer from low [economic] growth
-** adopted by many legislation(s) to cap high national debt +
-* Graduate Student Thomas Herndon reproduced analysis
-** countries left-out of the calculation (columns in MS Excel)
-** "... render the Reinhart and Rogoff point close to irrelevant for current public policy debate."
-** https://www.peri.umass.edu/fileadmin/pdf/working_papers/working_papers_301-350/WP322.pdf[Does High Public Debt Consistently Stifle Economic Growth? A Critique of Reinhart and Rogoff], Thomas Herndon, Michael Ash and Robert Pollin, 2013
+image:badnet-without-caption.png[width=50%]
+
+From <<Gu17>>
 
 
-=== Concrete Project
+=== Consequences?
 
-- C++ simulation
-- 10k actin filaments (line segments) distributed within bounding box
-- attraction/repulsion, creation/destruction over time
-- legacy code base single-threaded
-- Linux and Mac as target OS
+- security of autonomous driving
+- security of voice recognition systems (Siri, Alexa, ...)
+- product quality of online tools
+- trust in automated decision tools
+- trust in scientific classifiers
 
-[.XL-text]
+WARNING: [.XL-text]#Affects any deployed ML system!#
+
+
+
+== Adversarial Attacks Against Medical Deep Learning Systems
+
+=== Doctor's Appointment 
+
+icon:user-md[5x]
+
+=== Measurement
+
+icon:heartbeat[5x]
+
+=== Diagnosis
+
+icon:medkit[5x] &nbsp; or &nbsp; icon:heart[5x]
+
+=== Adversarial Attacks Against Medical Deep Learning Systems
+
+[.XL-text]#Samuel G. Finlayson, Hyung Won Chung, Isaac S. Kohane, Andrew L. Beam (HMS+Harvard+MIT)# +
+
+Science, 22 Mar 2019, Vol. 363, Issue 6433, pp. 1287-1289, https://doi.org/10.1126/science.aaw4399[10.1126/science.aaw4399]
+
+[quote]
+____
+The prospect of improving healthcare and medicine with the use
+of deep learning is truly exciting. [...]
+it seems inevitable that medical deep learning algorithms will become entrenched in the already multi-billion dollar medical information technology industry.
+____
+
+[NOTE.speaker]
 --
-*Best Insurance for Reproduciblity: CI*
+- published in Science
+- reproduced it
 --
 
-=== One fine day ...
-
-image:CI_screenshot_cpp.png[width=85%]
-
-=== two days of ...
-
-// https://www.pexels.com/de-de/foto/zoo-affe-affe-denken-33535/
-
-image::animal-ape-black-33535.jpg[background, size=cover]
-
-[.XL-text.text-center]
-=== A Reproducer!
-
-[source,c++]
-----
-#define CATCH_CONFIG_MAIN
-#include "catch2/catch.hpp"
-#include <random>
-
-TEST_CASE( "random numbers diced" ) {
-
-    //std::random_device rd{};
-    std::mt19937 gen{42};
-    std::normal_distribution<> d{5,2};
-
-    CHECK( d(gen) == Approx(3.8995310112) );
-}
-----
-
-[.XL-text.text-center]
-=== What is going on?
-
-[source,c++]
-----
-std::mt19937 gen{42};
-std::normal_distribution<> d{5,2};
-
-for( int i = 0;i<5;++i)
-     CHECK( d(gen) == Approx(???) );
-
-//Linux
-3.8995310112, 6.0308661394, 5.9477217113, 7.7369002444, 3.1663462535
-
-//MacOS
-6.0308661394, 3.8995310112, 7.7369002444, 5.9477217113, 4.7517056501
-----
-
 [.XL-text]
-=== I, the developer, must be the problem!
+=== Conclusion
 
-"The most prominent example is the pseudorandom number generators used by digital computers in which knowing a starting "seed" number produces an entirely predictable string of numbers which are unpredictable without it."
--- Wikipedia: {wikipedia-url-1}[Pseudorandomness]
+[quote, Finlayson et al. "Adversarial Attacks Against Medical Deep Learning Systems"]
+____
+In this work, we have outlined the systemic and technological reasons that cause adversarial examples to pose a disproportion-
+ately large threat in the medical domain, and provided examples of how such attacks may be executed.
+____
 
 
-[.XL-text]
-=== The internet must know
+**Can this be reproduced ?**
 
-"The PRNGs (MT and PCG) should produce the same numbers on any platform. However, the algorithms for producing the standard random number distributions in C++ are implementation-defined. You could use (a fixed version of) boost.random to achieve cross-platform reporducable random draws."
--- https://github.com/imneme/pcg-cpp/issues/50[github.com/imneme/pcg-cpp/issues/50]
 
-[.XL-text]
-=== ... and the holy scripture?
+=== 3 open datasets
 
-"The algorithms for producing each of the specified [random] distributions are implementation-defined."
--- https://github.com/cplusplus/draft.git[C++17 Standard Draft] Section 29.6.8.1 (3)
+- https://www.kaggle.com/c/diabetic-retinopathy-detection/data[Diabetic Retinopathy Detection]
+- http://academictorrents.com/details/557481faacd824c83fbf57dcf7b6da9383b3235a[X-ray Dataset of 14 Common Thorax Disease]
+- https://www.isic-archive.com/#!/topWithHeader/onlyHeaderTop/gallery[skin cancer dataset] (omitted from this presentation)
 
-[.XXL-text]
-=== Confirmed!
+=== https://www.kaggle.com/c/diabetic-retinopathy-detection/data[Diabetic Retinopathy] (DR)
 
-[source,c++]
-----
-//Linux, gcc
-3.8995310112, 6.0308661394, 5.9477217113, 7.7369002444, 3.1663462535
-
-//MacOS, xcode/clang
-6.0308661394, 3.8995310112, 7.7369002444, 5.9477217113, 4.7517056501
-
-//Windows, MSVC 19 2017
-6.0308661394, 3.8995310112, 7.7369002444, 5.9477217113, 4.7517056501
-----
-
-For details, see https://github.com/psteinb/cppugdd-reproducibility-cpp.git[github.com/psteinb/cppugdd-reproducibility-cpp]
-
-[.XL-text]
-=== Other languages?
-
-[cols=">,^.^,^.^",width=50%,frame=none,grid=none]
+[cols=">.^35,<.^65"]
 |===
 a|
+image:dr-original.png[width=80%,align=right]
+
 a|
-https://github.com/psteinb/cppugdd-reproducibility-python[Python3]
-a|
-https://github.com/psteinb/cppugdd-reproducibility-python[Java]
-
-| Linux
-a| icon:check[role=lightgreen]
-a| icon:check[role=lightgreen]
-
-| MacOS
-a| icon:check[role=lightgreen]
-a| icon:check[role=lightgreen]
-
-| Windows
-a| icon:check[role=lightgreen]
-a| icon:check[role=lightgreen]
+* https://www.kaggle.com/c/diabetic-retinopathy-detection/data[kaggle dataset]: https://en.wikipedia.org/wiki/Ophthalmoscopy[fundus photographs]
+* Diabetic retinopathy is the leading cause of blindness in the working-age population of the developed world.
+* Clinicians can identify DR by the presence of lesions (vascular abnormalities due to disease)
+* 88702 images, max. 4752x3168 RGB jpegs
+* 5 labels (severity of DR)
 
 |===
 
 
-[.XL-text]
-=== Summary
 
-* random number generators (`std::mt19937`) in C++11/14/17 are PRNGs
-* random number distributions in C++11/14/17 are **not reproducible across platforms**
+=== http://academictorrents.com/details/557481faacd824c83fbf57dcf7b6da9383b3235a[ChestX-ray8]
 
-&nbsp;
+[cols=">.^35,<.^65"]
+|===
+a|
+image:cxr-original.png[width=80%,align=right]
 
-"It shouldn’t be to difficult to roll your own If you restrict yourself to sensible ones (i.e. returning 32bit or 64Bit ints) and a small set of distributions."
--- https://github.com/imneme/pcg-cpp/issues/50#issuecomment-470497863[github.com/imneme/pcg-cpp/issues/50]
+a|
+* Classification and Localization of Common Thorax Diseases
+* 112,120 images
+* 1024x1024 8-bit greyscale
+* 14 labels, appearing non-exclusively
 
-== The C++ Standard And Implementation Defined
+|===
 
-=== Text Mining
+=== Data Access
 
-* my reference: https://github.com/cplusplus/draft/tree/c++17[CPP ISO Draft] from https://github.com/cplusplus/draft[github]
-* used git-branch `c++17`
-* 46 `.tex` files (127002 LOC)
-* generates pdf document (1499 pages)
+* Diabetic Retinopathy Dataset
+** 83 GB shared through kaggle
 
-[.XL-text]
-=== Extracting Implementation Defined
+* X-ray Dataset
+** 42 GB shared through science torrent 
 
-[source,tex]
-----
-\rSec2[rand.dist]{Random number distribution class templates}%                                                                         
-\indextext{random number generation!distributions|(}
+IMPORTANT: Very Good!
 
-\rSec3[rand.dist.general]{In general}
-%...
-\pnum
-The algorithms for producing each
-of the specified distributions are
-\impldef{algorithms for producing the standard random number distributions}.
-----
+[.notes]
+--
+* download of datasets was somewhat easy
+* kaggle required to create an account
+* omitted dataset used custom formatted REST API without front-end library :/
+--
 
-&nbsp;
+=== Code
 
-[%step]
-* wrote python parser (AST based latex parsers libs in python are too slow)
-** filtered implementation-defined statements `\impldef{}`
-** filtered section headings `\rSec0`, `\rSec1`, `\rSec2`, ...
-** code available at https://github.com/psteinb/mining-cpp17-standard.git[github.com/psteinb/mining-cpp17-standard.git]
-
-[.XL-text]
-=== Occurrences of `\impldef`
-
-- 212 `impldef` statements total
-- 123 `impldef` inside `std` library `.tex` files +
-(basis for this talk)
-
-[.XL-text]
-=== Occurrence by File
-
-image::impldef_by_texfile.svg[width=90%]
-
-[.XL-text]
-=== Occurrence by Section Tag
-
-image::impldef_by_sec1_stem.svg[width=90%]
-
-[.XL-text]
-=== Occurrence by All Section Tags
-
-image::impldef_by_all_sec1_stem.svg[width=90%]
-
-== A closer look at implementation-defined
-
-=== Keyword `unord`
-
-image::impldef_by_sec1_stem_unord_hilitd.svg[width=90%]
-
-=== Observations `unord`
-
-"For the default constructor, the number of buckets is \impldef{default number of buckets in `unordered_set`}."
--- https://github.com/cplusplus/draft/blob/c%2B%2B17/source/containers.tex#L8812[containers.tex:8812]
-
-(Also applies to `unordered_map`, `unordered_multimap`, `unordered_multiset`)
-
-=== Keyword `time`
-
-image::impldef_by_sec1_stem_time_hilitd.svg[width=90%]
-
-=== Observations `time`
-
-"It is \impldef{whether values are rounded or truncated to the required precision when converting between `time_t`"
--- https://github.com/cplusplus/draft/blob/c%2B%2B17/source/utilities.tex#L18941[utilities.tex:18941]
-
-=== Keyword `rand`
-
-image::impldef_by_sec1_stem_rand_hilitd.svg[width=90%]
-
-=== Observations `rand`
+https://github.com/sgfin/adversarial-medicine[github.com/sgfin/adversarial-medicine]
 
 [%step]
-* "The choice of engine type named by `default_random_engine` is `\impldef{type of `default_random_engine`}`." +
-https://github.com/cplusplus/draft/blob/c%2B%2B17/source/numerics.tex#L3781[numerics.tex:3781]
-* "A value of an \impldef{exception type when `random_device` constructor fails} type" + 
-https://github.com/cplusplus/draft/blob/c%2B%2B17/source/numerics.tex#L3871[numerics.tex:3871]
-* "It is \impldef{how `random_device::operator()` generates values} how these values are generated." +
-https://github.com/cplusplus/draft/blob/c%2B%2B17/source/numerics.tex#L3906[numerics.tex:3906]
+- notebooks reproduce all figures based on downloaded weights
+- python script to retrain two architectures (https://keras.io/applications/#resnet[Resnet50], https://keras.io/applications/#inceptionv3[InceptionV3])
 
-=== Miscellaneous Observations
+=== Code Quality
 
-- "The value returned for `pow(0, 0)` is \impldef{value of `pow(0,0)`}." +
-https://github.com/cplusplus/draft/blob/c%2B%2B17/source/numerics.tex#L1198[numerics.tex:1198]
-- 8 times statements like "The value/type of exception thrown by X is \impldef ...." +
-  `lib-intro.tex`, 2 `support.tex`, 3 `utilities.tex`, 2 `numerics.tex`
+[%step]
+- code was executable once dropbox weights downloaded
+- notebooks work from top to bottom
+- code largely undocumented
+- paper reports Resnet50 results, weights are for InceptionV3
+- readme reports similar results for either
+
+
+== My Rebuttal
+
+=== Claim
+
+[quote, Finlayson et al. "Adversarial Attacks Against Medical Deep Learning Systems"]
+____
+For each of our representative medical deep learning classifiers, both white and black box attacks were highly successful.
+____
+
+
+=== White Box Attacks?
+:stem: latexmath
+
+Given:
+
+[asciimath] 
+++++ 
+\vec{y} = f(\vec{x}, \theta), L( \vec{y}^{true}, f(\vec{x}, \theta))
+++++
+
+Weight Update Rule:
+
+[asciimath] 
+++++ 
+\theta_{i+1} = \theta_{i} + \eta \nabla_{\theta}L( \vec{y}^{true}, f(\vec{x}, \theta_i))
+++++
+
+
+=== Projected Gradient Descent Attack
+
+
+[asciimath] 
+++++ 
+x^{t+1} = Clip_{x,S} (x^{t} + \epsilon \sign(\nabla_x L(\theta,x,y)))
+++++
+
+[%step]
+* iterate until stem:[x^{t+1}] is missclassified
+* For a given set of allowed variations stem:[S]
+* PGD <<Madry17>>,<<Kurakin1611>> is a White Box Attack!
+
+[.notes]
+--
+* Using optimisation to counter optimisation
+--
+
+
+=== Taxonomy based on <<Biggio18>>
+
+[cols="4*",options="header"]
+|===
+|type
+|white box
+|grey box
+|black box
+
+|adversary knows
+|all of
+|subset of
+|only queries
+
+a| &nbsp;
+a| 
+* dataset
+* feature set
+* learning alg + loss
+* trained weights
+a| 
+* [.graytext]#dataset#
+* feature set
+* learning alg + loss
+* [.graytext]#trained weights#
+a| 
+* [.graytext]#dataset#
+* [.graytext]#feature set#
+* [.graytext]#learning alg + loss#
+* [.graytext]#trained weights#
+|===
+
+WARNING: [.XL-text]#Boundaries not clear cut!#
+
+=== Black-Box Attacks assume knowledge
+
+[quote]
+____
+[...] black box attacks were performed by crafting the attack against an independently-trained model with the same architecture and then transferring the resultant adversarial examples to the victim.
+____
+
+=== My Motivation
+
+icon:question-circle[5x]
+
+How about real black-box attacks?
+
+=== https://github.com/bethgelab/foolbox[Foolbox]
+
+[source,python,align="center"]
+----
+import foolbox
+import keras
+import numpy as np
+
+keras_model = ...#load weights
+
+fmodel = foolbox.models.KerasModel(keras_model, bounds=(0, 255),
+				   preprocessing=preprocessing)
+
+image, label = foolbox.utils.imagenet_example()
+
+attack = foolbox.attacks.LinfinityBasicIterativeAttack(fmodel)
+adversarial = attack(image[:, :, ::-1], label)
+----
+
+* offers a variety of white and black box attacks
+* simple API can wrap models from TensorFlow, PyTorch, Theano, Keras, Lasagne, MXNet
+
+=== Pure Black-box on Diabetic Retinopathy
+
+[cols="^.^,^.^,^.^",width=100%,frame=none,grid=none]
+|===
+a|
+[.text-center]
+.Original
+image:dr-original.png[width=80%]
+a|
+[.text-center]
+.Adversarial
+image:dr-adversarial.png[width=80%]
+a|
+[.text-center]
+.Difference*20
+image:dr-diff.png[width=80%]
+|===
+
+[.L-text,source,python]
+----
+attack = foolbox.attacks.SaltAndPepperNoiseAttack(fmodel)
+----
+
+[.notes]
+--
+* real world: shot noise in CCM chip
+--
+
+=== Easy! But why?
+
+[cols="2*",width=100%,frame=none,grid=none]
+|===
+a|
+[.text-center]
+.Class Inbalance
+image:dr_class_overview.svg[width=80%]
+
+a|
+[source,python]
+----
+train_generator = train_datagen.flow_from_directory(
+            'images/train',
+            target_size=(224, 224),
+            batch_size=batch_size,
+            class_mode='categorical',
+            shuffle=True)
+----
+
+* Input image sizes range  [2500-4000]x[2000-2500]
+* before training, resized to 224x224
+* eye doctor: "DR pathologies are very fine structures!"
+
+|===
+
+[.notes]
+--
+* inbalanced class frequencies in training dataset
+* real world: DR discovered in very fine structured elements
+* subject to further study
+--
+
+=== DR Pathologies
+
+[cols="2*^.^",frame=none,grid=none]
+|===
+a|
+[.text-center]
+.Healthy
+image:dr-10-left-level0_800px.jpg[width=80%]
+a|
+[.text-center]
+.Malignant
+image:dr-16-left-level4_800px.jpg[width=80%]
+|===
+
+
+=== Chest X-Ray Dataset?
+
+
+[cols="2*^.^",frame=none,grid=none,width=80%]
+|===
+a|
+[.text-center]
+&nbsp; +
+&nbsp; +
+No simple attack worked: +
+
+* `SaltAndPepperNoiseAttack`
+* `GaussianBlurAttack`
+* `AdditiveUniformNoiseAttack`
+* `ContrastReductionAttack`
+a|
+[.text-center]
+&nbsp; +
+&nbsp; +
+image:cxr-original.png[width=50%,align=center]
+|===
+
+=== Decision Boundary Attack
+
+image:1712.04248_fig2.png[width=60%,float=left]
+
+&nbsp;
+&nbsp;
+
+Decision-Based Adversarial Attacks: Reliable Attacks Against Black-Box Machine Learning Models. +
+Wieland Brendel, Jonas Rauber and Matthias Bethge +
+arXiv preprint https://arxiv.org/abs/1712.04248[arXiv:1712.04248] (2017)
+
+
+=== Pure Black-box Attacks on Chest X-Ray
+
+[cols="^.<,^.<,^.<",width=100%,frame=none,grid=none]
+|===
+a| 
+[.text-center]
+.Original
+image:cxr-original.png[width=80%]
+`predict(label) = healthy`
+a|
+[.text-center]
+.Adversarial Template
+image:cxr-adversarial-template.png[width=80%]
+`predict(label) = malignant`
+a|
+[.text-center]
+.Adversarial
+image:cxr-adversarial.png[width=80%]
+`predict(label) = malignant`
+|===
+
+[.notes]
+--
+* model's predict function was called ~5000 times
+--
 
 == Summary
 
-[.XXL-text]
-=== Take-Aways
+[role=L-text]
+=== Adversarial Attacks Against Medical Deep Learning Systems
 
 [%step]
-* cross-platform development is hard (in any programming language)
-* it appears to be even harder in C++ by support of the C++ standard (implementation-defined)
-* implementation-defined means work for a developer
-** more work developing
-** less fun using C++
+* robustness of DL classifiers as diagnostic systems
+* successfully achieved reproducibility (praise to the authors)
+* illustrated classifiers and attacks appear remote to reality
+* portions of the paper contradictory in the details
+
+[role=XL-text]
+=== Bigger Picture
+
+[%step]
+* end-to-end DL may not produce machine intelligence (data intelligence?)
+* if data is all you got, better treat it carefully!
+* adversarial examples = tool to probe resilience of your classifiers
 
 
-[.XL-text]
-=== Homework?
 
-"Re-run, Repeat, Reproduce, Reuse, Replicate: Transforming Code into Scientific Contributions"
--- Benureau et al (https://www.frontiersin.org/articles/10.3389/fninf.2017.00069/full[Frontiers in Neuroinformatics] 2018)
+include::references.adoc[]
 
-**Is this possible in C++? Cross-Platform and Fast!**
