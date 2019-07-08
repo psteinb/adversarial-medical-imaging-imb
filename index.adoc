@@ -1,7 +1,7 @@
 = Blind Adversarial Attacks Against Medical Deep Learning Systems
 :imagesdir: images
 :icons: font
-:date: May 16, 2019
+:date: July 11, 2019
 :my_name: Peter Steinbach
 :my_email: steinbach@extern.mpi-cbg.de
 :my_twitter: psteinb_
@@ -18,13 +18,34 @@
 :stem:
 
 mailto:{my_email}[{my_name}] (https://www.mpi-cbg.de[MPI CBG], https://www.scionics.de[Scionics]) +
-2nd MLC Workshop {date} +
-Helmholtz-Zentrum Dresden-Rossendorf, Germany +
+Institute Seminar {date} +
+Institute for Medical Informatics and Biometry, Dresden, Germany +
 https://twitter.com/{my_twitter}[icon:twitter[] psteinb_] https://github.com/{my_github}[icon:github[] psteinb] + 
 
-== Introducing Adversarial Examples
+== Deep Learning
 
-icon:question-circle[5x]
+=== Deep Learning
+:stem: latexmath
+
+Given:
+
+[asciimath] 
+++++ 
+\vec{y} = f(\vec{x}, \theta), L( \vec{y}^{true}, f(\vec{x}, \theta))
+++++
+
+&nbsp;
+
+Weight Update Rule:
+
+[asciimath] 
+++++ 
+\theta_{i+1} = \theta_{i} + \eta \nabla_{\theta}L( \vec{y}^{true}, f(\vec{x}, \theta_i))
+++++
+
+&nbsp;
+
+(stem:[\nabla_{\theta}L] estimated by https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Extensions_and_variants[mini-batched stochastic gradient descent])
 
 === Supervised Deep Learning Classifiers
 
@@ -38,6 +59,28 @@ From <<MapRBlog>>
 * large training/test set
 * data set = good balance of classes
 --
+
+=== History
+
+image:imagenet_error_rate_history.svg[height=30%]
+
+[.notes]
+--
+* 2017: 29/38 competing teams with 95% accuracy!
+--
+
+=== AI is Here!
+
+image:ai_is_here.jpg[]
+
+[.notes]
+--
+* dangerous over-generalisation
+--
+
+== Introducing Adversarial Examples
+
+icon:question-circle[5x]
 
 === What are Adversarial Examples?
 
@@ -57,7 +100,6 @@ image:badnet-without-caption.png[width=50%]
 
 From <<Gu17>>
 
-
 === Consequences?
 
 - security of autonomous driving
@@ -67,7 +109,6 @@ From <<Gu17>>
 - trust in scientific classifiers
 
 WARNING: [.XL-text]#Affects any deployed ML system!#
-
 
 
 == Adversarial Attacks Against Medical Deep Learning Systems
