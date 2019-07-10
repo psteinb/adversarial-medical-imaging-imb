@@ -33,6 +33,23 @@
     color: gray;
 }
 
+.XS-text {
+
+    font-size: .5em !important;
+
+}
+
+.S-text {
+
+    font-size: .75em !important;
+
+}
+
+.M-text {
+
+    font-size: .9em !important;
+
+}
 
 .L-text {
 

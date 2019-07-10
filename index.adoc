@@ -1,4 +1,4 @@
-= Blind Adversarial Attacks Against Medical Deep Learning Systems
+= It takes three pixels to make the seeing blind 
 :imagesdir: images
 :icons: font
 :date: July 11, 2019
@@ -24,9 +24,10 @@ https://twitter.com/{my_twitter}[icon:twitter[] psteinb_] https://github.com/{my
 
 == Deep Learning
 
-=== Deep Learning
+=== in one slide
 :stem: latexmath
 
+// based on https://indico.mpi-cbg.de/event/118/contributions/444/attachments/166/243/ml-intro.pdf
 Given:
 
 [asciimath] 
@@ -34,7 +35,12 @@ Given:
 \vec{y} = f(\vec{x}, \theta), L( \vec{y}^{true}, f(\vec{x}, \theta))
 ++++
 
-&nbsp;
+[asciimath]
+++++ 
+\theta \approx argmin_{\theta} L( \vec{y}^{true}, f(\vec{x}, \theta)
+++++
+
+[.XS-text]#&nbsp;#
 
 Weight Update Rule:
 
@@ -42,8 +48,6 @@ Weight Update Rule:
 ++++ 
 \theta_{i+1} = \theta_{i} + \eta \nabla_{\theta}L( \vec{y}^{true}, f(\vec{x}, \theta_i))
 ++++
-
-&nbsp;
 
 (stem:[\nabla_{\theta}L] estimated by https://en.wikipedia.org/wiki/Stochastic_gradient_descent#Extensions_and_variants[mini-batched stochastic gradient descent])
 
@@ -60,13 +64,30 @@ From <<MapRBlog>>
 * data set = good balance of classes
 --
 
-=== History
 
-image:imagenet_error_rate_history.svg[height=30%]
+=== History: https://en.wikipedia.org/wiki/ImageNet[ImageNet]
+
+[cols="2*^.^",width=90%,frame=none,grid=none]
+|===
+a|
+[.L-text]
+* curated database of "images" and labels
+* 15M images in 21k synonym classes
+
+* 2017 (last): 2.25% classification error
+
+a|
+image:imagenet_error_rate_history.svg[width=70%,align=right]
+
+|===
+
 
 [.notes]
 --
-* 2017: 29/38 competing teams with 95% accuracy!
+* Imagenet = curated DB of web links to images and labels
+* 15M images in 21k synonym classes
+* 2017 LOC: 2.25% classification error
+* classification/localization challenges since 2010
 --
 
 === AI is Here!
@@ -100,16 +121,19 @@ image:badnet-without-caption.png[width=50%]
 
 From <<Gu17>>
 
-=== Consequences?
+=== Consequences!
 
+- trust in any DL classifier
 - security of autonomous driving
 - security of voice recognition systems (Siri, Alexa, ...)
-- product quality of online tools
-- trust in automated decision tools
-- trust in scientific classifiers
+- scientific use of DL?
 
 WARNING: [.XL-text]#Affects any deployed ML system!#
 
+[.notes]
+--
+* how about medical imaging systems?
+--
 
 == Adversarial Attacks Against Medical Deep Learning Systems
 
@@ -145,16 +169,13 @@ ____
 --
 
 [.XL-text]
-=== Conclusion
+=== Can the Conclusion be reproduced?
 
-[quote, Finlayson et al. "Adversarial Attacks Against Medical Deep Learning Systems"]
+[quote, Finlayson et al., "Adversarial Attacks Against Medical Deep Learning Systems"]
 ____
-In this work, we have outlined the systemic and technological reasons that cause adversarial examples to pose a disproportion-
-ately large threat in the medical domain, and provided examples of how such attacks may be executed.
+[.XL-text]#In this work, we have outlined the systemic and technological reasons that cause adversarial examples to pose a disproportion-
+ately large threat in the medical domain, and provided examples of how such attacks may be executed.#
 ____
-
-
-**Can this be reproduced ?**
 
 
 === 3 open datasets
@@ -176,7 +197,6 @@ a|
 * Clinicians can identify DR by the presence of lesions (vascular abnormalities due to disease)
 * 88702 images, max. 4752x3168 RGB jpegs
 * 5 labels (severity of DR)
-
 |===
 
 
@@ -196,22 +216,6 @@ a|
 
 |===
 
-=== Data Access
-
-* Diabetic Retinopathy Dataset
-** 83 GB shared through kaggle
-
-* X-ray Dataset
-** 42 GB shared through science torrent 
-
-IMPORTANT: Very Good!
-
-[.notes]
---
-* download of datasets was somewhat easy
-* kaggle required to create an account
-* omitted dataset used custom formatted REST API without front-end library :/
---
 
 === Code
 
@@ -221,24 +225,50 @@ https://github.com/sgfin/adversarial-medicine[github.com/sgfin/adversarial-medic
 - notebooks reproduce all figures based on downloaded weights
 - python script to retrain two architectures (https://keras.io/applications/#resnet[Resnet50], https://keras.io/applications/#inceptionv3[InceptionV3])
 
-=== Code Quality
 
-[%step]
-- code was executable once dropbox weights downloaded
-- notebooks work from top to bottom
-- code largely undocumented
-- paper reports Resnet50 results, weights are for InceptionV3
-- readme reports similar results for either
-
-
-== My Rebuttal
+== From reproduction to critique
 
 === Claim
 
-[quote, Finlayson et al. "Adversarial Attacks Against Medical Deep Learning Systems"]
+[quote, Finlayson et al.,"Adversarial Attacks Against Medical Deep Learning Systems"]
 ____
-For each of our representative medical deep learning classifiers, both white and black box attacks were highly successful.
+[.XL-text]#For each of our representative medical deep learning classifiers, both white and black box attacks were highly successful.#
 ____
+
+
+=== Taxonomy based on <<Biggio18>>
+
+[cols="4*",options="header"]
+|===
+|type
+|white box
+|grey box
+|black box
+
+|adversary knows
+|all of
+|subset of
+|only queries
+
+a| &nbsp;
+a| 
+* dataset
+* feature set
+* learning alg + loss
+* trained weights
+a| 
+* [.graytext]#dataset#
+* feature set
+* learning alg + loss
+* [.graytext]#trained weights#
+a| 
+* [.graytext]#dataset#
+* [.graytext]#feature set#
+* [.graytext]#learning alg + loss#
+* [.graytext]#trained weights#
+|===
+
+WARNING: [.XL-text]#Boundaries not clear cut!#
 
 
 === White Box Attacks?
@@ -278,39 +308,7 @@ x^{t+1} = Clip_{x,S} (x^{t} + \epsilon \sign(\nabla_x L(\theta,x,y)))
 --
 
 
-=== Taxonomy based on <<Biggio18>>
 
-[cols="4*",options="header"]
-|===
-|type
-|white box
-|grey box
-|black box
-
-|adversary knows
-|all of
-|subset of
-|only queries
-
-a| &nbsp;
-a| 
-* dataset
-* feature set
-* learning alg + loss
-* trained weights
-a| 
-* [.graytext]#dataset#
-* feature set
-* learning alg + loss
-* [.graytext]#trained weights#
-a| 
-* [.graytext]#dataset#
-* [.graytext]#feature set#
-* [.graytext]#learning alg + loss#
-* [.graytext]#trained weights#
-|===
-
-WARNING: [.XL-text]#Boundaries not clear cut!#
 
 === Black-Box Attacks assume knowledge
 
@@ -381,7 +379,7 @@ attack = foolbox.attacks.SaltAndPepperNoiseAttack(fmodel)
 |===
 a|
 [.text-center]
-.Class Inbalance
+.Dataset yields Class Imbalance
 image:dr_class_overview.svg[width=80%]
 
 a|
@@ -396,8 +394,14 @@ train_generator = train_datagen.flow_from_directory(
 ----
 
 * Input image sizes range  [2500-4000]x[2000-2500]
-* before training, resized to 224x224
-* eye doctor: "DR pathologies are very fine structures!"
+* before training, Finlayson et al https://github.com/sgfin/adversarial-medicine/blob/1524f3d03436d0c71b75cd2d8fd2225d0fd2e36b/train_models/train_model.py#L52[resized to 224x224]!
+
+&nbsp;
+
+[quote, Dresden Eye Doctor, Private Discussion, role=text-right]
+____
+[.XL-text]#DR pathologies are very fine structures! I wouldn't trust a machine to do it.#
+____
 
 |===
 
@@ -447,10 +451,7 @@ image:cxr-original.png[width=50%,align=center]
 
 === Decision Boundary Attack
 
-image:1712.04248_fig2.png[width=60%,float=left]
-
-&nbsp;
-&nbsp;
+image:1712.04248_fig7.png[width=80%]
 
 Decision-Based Adversarial Attacks: Reliable Attacks Against Black-Box Machine Learning Models. +
 Wieland Brendel, Jonas Rauber and Matthias Bethge +
@@ -483,25 +484,81 @@ image:cxr-adversarial.png[width=80%]
 * model's predict function was called ~5000 times
 --
 
+=== Where was the Chest X-Ray tricked?
+
+[cols="^.<,^.<,^.<",width=100%,frame=none,grid=none]
+|===
+a| 
+[.text-center]
+.Original
+image:cxr-original.png[width=80%]
+`predict(label) = healthy`
+a|
+[.text-center]
+.Adversarial
+image:cxr-adversarial.png[width=80%]
+`predict(label) = malignant`
+a|
+[.text-center]
+.Difference
+image:cxr-diff.png[width=80%]
+|===
+
+
+== Adversarial Examples are Features
+
+=== Adversarial Examples were known for some time
+
+
+
 == Summary
 
 [role=L-text]
 === Adversarial Attacks Against Medical Deep Learning Systems
 
 [%step]
-* robustness of DL classifiers as diagnostic systems
+// * robustness of DL classifiers as diagnostic systems
 * successfully achieved reproducibility (praise to the authors)
 * illustrated classifiers and attacks appear remote to reality
 * portions of the paper contradictory in the details
 
 [role=XL-text]
-=== Bigger Picture
+=== AI and the Bigger Picture
 
 [%step]
 * end-to-end DL may not produce machine intelligence (data intelligence?)
 * if data is all you got, better treat it carefully!
-* adversarial examples = tool to probe resilience of your classifiers
+* adversarial examples
+** feature
+** tool to probe accuracy or resilience
 
+== Appendix
+
+=== Data Access
+
+* Diabetic Retinopathy Dataset
+** 83 GB shared through kaggle
+
+* X-ray Dataset
+** 42 GB shared through science torrent 
+
+IMPORTANT: Very Good!
+
+[.notes]
+--
+* download of datasets was somewhat easy
+* kaggle required to create an account
+* omitted dataset used custom formatted REST API without front-end library :/
+--
+
+=== Code Quality Comments
+
+[%step]
+- code was executable once dropbox weights downloaded
+- notebooks work from top to bottom
+- code largely undocumented
+- paper reports Resnet50 results, weights are for InceptionV3
+- readme reports similar results for either
 
 
 include::references.adoc[]
