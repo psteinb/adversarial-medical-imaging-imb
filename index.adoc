@@ -507,8 +507,49 @@ image:cxr-diff.png[width=80%]
 
 == Adversarial Examples are Features
 
-=== Adversarial Examples were known for some time
+=== Adversarial Examples are https://arxiv.org/abs/1712.03141[known] <<Biggio18>>
 
+image:1712.03141_fig8.png[]
+
+
+=== Adversarial Training <<Madry2017>>
+
+Weight Update Rule:
+
+[asciimath] 
+++++ 
+\theta_{i+1} = \theta_{i} + \eta \nabla_{\theta}L( \vec{y}^{true}, f(\vec{x}, \theta_i))
+++++
+
+&nbsp;
+
+Weight Update Rule with adversary:
+
+[asciimath] 
+++++ 
+\theta_{i+1} = \theta_{i} + \eta \nabla_{\theta}L( \vec{y}^{true}, f(\vec{x} + \vec{\delta}, \theta_i))
+++++
+
+[.notes]
+--
+* make adversary part of the training
+* shown to make models more robust to attacks
+--
+
+=== Is Deep Learning Training bugged?
+
+icon:question-circle[5x]
+
+=== Not necessarily, it's also http://gradientscience.org/adv/[the data]
+
+[cols="2*^.^",frame=none,grid=none,width=100%]
+|===
+a|
+image:gradientscience_adv_training_results.png[width=100%,frame=none]
+
+a|
+image:gradientscience_adv_robust_nonrobust.png[width=80%,align=center]
+|===
 
 
 == Summary
