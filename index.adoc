@@ -534,21 +534,22 @@ Weight Update Rule with adversary:
 --
 * make adversary part of the training
 * shown to make models more robust to attacks
+* much longer training times
 --
 
 === Is Deep Learning Training bugged?
 
 icon:question-circle[5x]
 
-=== Not necessarily, it's also http://gradientscience.org/adv/[the data]
+=== Not necessarily, it's also http://gradientscience.org/adv/[the data] <<Ilyas2019>>
 
 [cols="2*^.^",frame=none,grid=none,width=100%]
 |===
 a|
-image:gradientscience_adv_training_results.png[width=100%,frame=none]
+image:gradientscience_adv_robust_nonrobust.png[width=80%,align=center]
 
 a|
-image:gradientscience_adv_robust_nonrobust.png[width=80%,align=center]
+image:gradientscience_adv_training_results.png[width=100%,frame=none]
 |===
 
 
