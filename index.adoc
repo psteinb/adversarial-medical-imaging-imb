@@ -560,7 +560,7 @@ image:gradientscience_adv_training_results.png[width=100%,frame=none]
 
 [%step]
 // * robustness of DL classifiers as diagnostic systems
-* successfully achieved reproducibility (praise to the authors)
+* successfully achieved reproducibility of paper results (praise to the authors)
 * illustrated classifiers and attacks appear remote to reality
 * portions of the paper contradictory in the details
 
@@ -569,10 +569,17 @@ image:gradientscience_adv_training_results.png[width=100%,frame=none]
 
 [%step]
 * end-to-end DL may not produce machine intelligence (data intelligence?)
+* expectations on DL governed by premature generalisation
 * if data is all you got, better treat it carefully!
 * adversarial examples
-** feature
+** features of data implanted into model
 ** tool to probe accuracy or resilience
+
+=== DL expected to lay golden eggs
+
+++++
+<iframe width="1120" height="630" src="https://www.youtube.com/embed/jV5xsOfQFOc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+++++
 
 == Appendix
 
