@@ -22,6 +22,25 @@ Institute Seminar {date} +
 Institute for Medical Informatics and Biometry, Dresden, Germany +
 https://twitter.com/{my_twitter}[icon:twitter[] psteinb_] https://github.com/{my_github}[icon:github[] psteinb] + 
 
+== Disclaimer(s)
+
+=== Me at https://mpi-cbg.de[MPI CBG] / https://scionics.de[Scionics]
+
+image:x600px-MPI-CBG_building_outside_4pl.jpg[width=55%]
+
+[.XL-text]
+**Scientific Compitung Facility**: Bioinformatics, Bio-Image-Analysis, HPC Cluster Support, Software Engineering, Hardware Control, Data Science/ML, Data Management, ELNs, ...
+
+=== These Slides
+
+[.XXL-text]
+--
+icon:users[5x] icon:download[5x] +
+  + 
+For questions, concerns and feedback: +
+https://github.com/psteinb/adversarial-medical-imaging-imb[github.com/psteinb/adversarial-medical-imaging-imb]
+--
+
 == Deep Learning
 
 === in one slide
@@ -123,7 +142,7 @@ From <<Gu17>>
 
 === Consequences!
 
-- trust in any DL classifier
+- trust in any (Deep Learning) classifiers?
 - security of autonomous driving
 - security of voice recognition systems (Siri, Alexa, ...)
 - scientific use of DL?
@@ -560,9 +579,13 @@ image:gradientscience_adv_training_results.png[width=100%,frame=none]
 
 [%step]
 // * robustness of DL classifiers as diagnostic systems
-* successfully achieved reproducibility of paper results (praise to the authors)
+* successfully achieved reproducibility of paper results
+(praise to the authors!)
 * illustrated classifiers and attacks appear remote to reality
+(downscaling to 224x224, inbalanced dataset)
 * portions of the paper contradictory in the details
+(white vs. grey vs. black box attacks)
+* https://github.com/sgfin/adversarial-medicine/issues/4#issue-466383100[contacted] authors to resolve outstanding issues, offered (https://github.com/sgfin/adversarial-medicine/issues/4#issuecomment-510145783)[co-authorship]
 
 [role=XL-text]
 === AI and the Bigger Picture
@@ -570,7 +593,6 @@ image:gradientscience_adv_training_results.png[width=100%,frame=none]
 [%step]
 * end-to-end DL may not produce machine intelligence (data intelligence?)
 * expectations on DL governed by premature generalisation
-* if data is all you got, better treat it carefully!
 * adversarial examples
 ** features of data implanted into model
 ** tool to probe accuracy or resilience
