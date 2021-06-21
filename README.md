@@ -1,5 +1,5 @@
-# Reproducibility and Portability Battles in the C++ Standard
+# It takes three pixels to make the seeing blind
 
-slidedeck for my reproducibility talk at the [Dresden C++ UG, June 13, 2019](http://cpp-ug-dresden.blogspot.com/2019/05/june-talk-peter-steinbach.html).
+presentation given at the IMB Institute Seminar on July 11, 2019, **I**nstitute for **M**edical **I**nformatics and Biometry in Dresden, Germany.
 
-The slides can be viewed at [psteinb.github.io/cppugdd-reproducibility/](https://psteinb.github.io/cppugdd-reproducibility/).
+The slides can be viewed at [psteinb.github.io/adversarial-medical-imaging-imb/index.html](https://psteinb.github.io/adversarial-medical-imaging-imb/index.html).
